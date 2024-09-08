@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[12pt,twoside]{article}
 
 % Language setting
 % Replace `english' with e.g. `spanish' to change the document language
@@ -15,7 +15,7 @@
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 %\usepackage{fancyhdr}
 
-\title{Title: Clinical Diagnosis of Cardiovascular Disorder using Machine Learning to Classify Heart Sounds }
+\title{Title: Development of a Low-Power Keyword Spotter (KWS) for "Bleeding-Edge" Applications}
 \author{Design Contest, VLSID 2025, Bengaluru}
 
 \begin{document}
@@ -37,24 +37,18 @@ The \href{https://www.microchip.com/en-us/development-tool/mpfs-icicle-kit-es}{P
 \section{Explanation of the Idea}
 % Include a block diagram, overview of implementation  (Minimum font size: 10pt, Times New Roman font. Maximum two pages including tables, diagram, references (if any) )
 
+Edge computing is a distributed computing paradigm that brings computation and data storage closer to the devices where it is being gathered, rather than relying on a central location that can be far away. This helps reduce latency, bandwidth usage, and improves reliability
+
 %%% FIGURE: KWS ARCHITECTURE
 %%% ------------------------
 \begin{figure}[htbp]	
     %\centerline{\includegraphics{figs/KWS-architecture.png}}
     \includegraphics[width=1.0\textwidth]{figs/KWS-arch.png}
-    \caption{Heart sound classification architecture.}
-    \label{fig:arch-heart-sound}
+    \caption{Keyword Spotter (KWS) architecture.}
+    \label{fig:KWS_Arch}
 \end{figure}
 
-Identifying cardiac disorders at an early stage continues to be a vital and key approach to the diagnosis of cardiovascular disease, recognized as a primary cause of mortality \cite{members2016heart}.  
-The sound signals of the heart contain information relevant to cardiovascular disorders, which has been shown to be effective in the early identification of latent heart disease \cite{yuenyong2011framework}. Historically, medical professionals have used heart sound through \textit{auscultation} to detect cardiac disorders.
-Auscultation is a clinical method that is used to hear the internal sounds of the body, usually through the use of a stethoscope. It is often used to inspect the circulatory, respiratory, and gastrointestinal systems.
-It is non-invasive, cost-effective, and requires minimal equipment, making it ideal for cardiac exams in small clinics or for use at home.
-However, in reality, auscultation of heart sounds is heavily dependent on the experience and skills of physicians.
-Cardiologists achieve an auscultation accuracy of around 80\% \cite{strunic2007detection}, while general physicians generally have an accuracy ranging from 20\% to 40\%.\cite{lam2018factors}. Computer-aided analysis through signal processing and machine learning has significantly narrowed this gap, offering enhanced tools to general physicians for more accurate diagnosis.
 
-The standard procedure for classifying heart sounds is shown in Figure~\ref{fig:arch-heart-sound} \cite{gupta2007neural, nguyen2023heart}. It comprises three main steps: 1) signal conditioning, 2) extraction of spectral features, and 3) classification. This method is a proven method in the audio world, specifically keyword spotting (KWS) \cite{chong20220}.
- 
 \section{Example of its Application}
 % application (Describe an example consisting of potential application/Future application. This will enable usage model towards its market acceptance) (maximum 200 words)
 
