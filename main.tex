@@ -37,14 +37,6 @@ The \href{https://www.microchip.com/en-us/development-tool/mpfs-icicle-kit-es}{P
 \section{Explanation of the Idea}
 % Include a block diagram, overview of implementation  (Minimum font size: 10pt, Times New Roman font. Maximum two pages including tables, diagram, references (if any) )
 
-%%% FIGURE: KWS ARCHITECTURE
-%%% ------------------------
-\begin{figure}[htbp]	
-    %\centerline{\includegraphics{figs/KWS-architecture.png}}
-    \includegraphics[width=1.0\textwidth]{figs/HSC-arch.png}
-    \caption{Heart sound classification architecture: 1) Signal conditioning to prepare it for FFT, 2) Spectral feature (MFCC) extraction from the FFT}
-    \label{fig:arch-heart-sound}
-\end{figure}
 
 Identifying cardiac disorders at an early stage continues to be a vital and key approach to the diagnosis of cardiovascular disease, recognized as a primary cause of mortality \cite{members2016heart}.  
 The sound signals of the heart contain information relevant to cardiovascular disorders, which has been shown to be effective in the early identification of latent heart disease \cite{yuenyong2011framework}. Historically, medical professionals have used heart sound through \textit{auscultation} to detect cardiac disorders.
@@ -53,7 +45,21 @@ It is non-invasive, cost-effective, and requires minimal equipment, making it id
 However, in reality, auscultation of heart sounds is heavily dependent on the experience and skills of physicians.
 Cardiologists achieve an auscultation accuracy of around 80\% \cite{strunic2007detection}, while general physicians generally have an accuracy ranging from 20\% to 40\%.\cite{lam2018factors}. Computer-aided analysis through signal processing and machine learning has significantly narrowed this gap, offering enhanced tools to general physicians for more accurate diagnosis.
 
-The standard procedure for classifying heart sounds is shown in Figure~\ref{fig:arch-heart-sound} \cite{gupta2007neural, nguyen2023heart}. It comprises three main steps: 1) signal conditioning, 2) extraction of spectral features, and 3) classification. This method is a proven method in the audio world, specifically keyword spotting (KWS) \cite{chong20220}.
+%%% FIGURE: HSC ARCHITECTURE
+%%% ------------------------
+\begin{figure}[htbp]	
+    %\centerline{\includegraphics{figs/KWS-architecture.png}}
+    \includegraphics[width=1.0\textwidth]{figs/HSC-arch.png}
+    \caption{Heart sound classification architecture: 1) Signal conditioning to prepare it for FFT, 2) Spectral feature (MFCC) extraction from the FFT, and 3) classification of the heart sound using neural network (CNN/RNN/etc.)}
+    \label{fig:arch-heart-sound}
+\end{figure}
+
+The typical procedure for classifying heart sounds is shown in Figure~\ref{fig:arch-heart-sound} \cite{gupta2007neural, nguyen2023heart}. It comprises three main steps: 1) signal conditioning, 2) extraction of spectral features, and 3) classification. This method is a proven method in the audio world, specifically keyword spotting (KWS) \cite{chong20220}. For signal conditioning, the digitized heart sound undergoes a high-pass filter (HPF) to eliminate any DC components in the signal. THe HPF is typically performed by $y[n] = x[n] - \alpha~x[n-1]$ where $\alpha$ typically ranges from 0.9 to 1 \cite{han2006efficient}. Subsequently, the signal is segmented and windowed (preferably a Hanning window) to prevent spectral leakage.  The linear spectrum is transformed into a Mel scale for better computing efficiency using the following equation $Mel(f) = 2595\cdot \log(1 + f/700)$ \cite{han2006efficient}.
+
+Digital audio data are first high-pass filtered, typically performed by $y[n] = x[n] - \alpha~x[n-1]$ where $\alpha$ typically ranges from 0.9 to 1 \cite{han2006efficient}.
+Next, a window function (e.g., Hanning) is applied to the data to minimize spectral leakage during the fast Fourier transform (FFT) process. The linear spectrum is transformed into a Mel scale for better computing efficiency using the following equation $Mel(f) = 2595\cdot \log(1 + f/700)$ \cite{han2006efficient}.
+Subsequently, the logarithm of the Mel frequency power is computed followed by the discrete cosine transform (DCT) to generate the MFCC coefficients. These coefficients are then fed into a \textit{trained} classifier (CNN/RNN) to detect possible cardiovascular disorders.
+
  
 \section{Example of its Application}
 % application (Describe an example consisting of potential application/Future application. This will enable usage model towards its market acceptance) (maximum 200 words)
