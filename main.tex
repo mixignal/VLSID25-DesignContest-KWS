@@ -22,8 +22,11 @@
 \maketitle
 
 \begin{abstract}
-
+Cardiovascular disease is one of the leading causes of death worldwide, including India. Identifying cardiovascular disorders early continues to be a vital and key approach to the diagnosis of cardiovascular disease. 
+Heart sound through auscultation to detect cardiac disorders is a popular non-invasive method to detect disorders used by cardiologists and general physicians. However, the precision of diagnosis varies widely between a specialist and a general physician. 
+This work proposes an electronic heart monitor based on machine learning that will truly democratize even critical diagnosis, giving the general population access to high-quality healthcare. A machine learning model will be used to train the model with a large dataset of heart sounds from the 2016 Challenge Database of PhysioNet Computational Cardiology (CinC). The classification model will be deployed on Microchip’s platform PolarFire SoC FPGA Icicle Kit and interfaced with a digital stethoscope to diagnose cardiovascular disorders in real time.
 \end{abstract}
+
 
 %%%--- HARDWARE PLATFORM
 \section{Hardware Platform}
@@ -43,7 +46,7 @@ The sound signals of the heart contain information relevant to cardiovascular di
 Auscultation is a clinical method that is used to hear the internal sounds of the body, usually through the use of a stethoscope. It is often used to inspect the circulatory, respiratory, and gastrointestinal systems.
 It is non-invasive, cost-effective, and requires minimal equipment, making it ideal for cardiac exams in small clinics or for use at home.
 However, in reality, auscultation of heart sounds is heavily dependent on the experience and skills of physicians.
-Cardiologists achieve an auscultation accuracy of around 80\% \cite{strunic2007detection}, while general physicians generally have an accuracy ranging from 20\% to 40\%.\cite{lam2018factors}. Computer-aided analysis through signal processing and machine learning has significantly narrowed this gap, offering enhanced tools to general physicians for more accurate diagnosis.
+Cardiologists achieve an auscultation accuracy of around 80\% \cite{strunic2007detection}, while general physicians generally have an accuracy ranging from 20\% to 40\% \cite{lam2018factors}. Computer-aided analysis through signal processing and machine learning has significantly narrowed this gap, offering enhanced tools to general physicians for more accurate diagnosis.
 
 %%% FIGURE: HSC ARCHITECTURE
 %%% ------------------------
@@ -54,34 +57,62 @@ Cardiologists achieve an auscultation accuracy of around 80\% \cite{strunic2007d
     \label{fig:arch-heart-sound}
 \end{figure}
 
-The typical procedure for classifying heart sounds is shown in Figure~\ref{fig:arch-heart-sound} \cite{gupta2007neural, nguyen2023heart}. It comprises three main steps: 1) signal conditioning, 2) extraction of spectral features, and 3) classification. This method is a proven method in the audio world, specifically keyword spotting (KWS) \cite{chong20220}. For signal conditioning, the digitized heart sound undergoes a high-pass filter (HPF) to eliminate any DC components in the signal. THe HPF is typically performed by $y[n] = x[n] - \alpha~x[n-1]$ where $\alpha$ typically ranges from 0.9 to 1 \cite{han2006efficient}. Subsequently, the signal is segmented and windowed (preferably a Hanning window) to prevent spectral leakage.  The linear spectrum is transformed into a Mel scale for better computing efficiency using the following equation $Mel(f) = 2595\cdot \log(1 + f/700)$ \cite{han2006efficient}.
-
-Digital audio data are first high-pass filtered, typically performed by $y[n] = x[n] - \alpha~x[n-1]$ where $\alpha$ typically ranges from 0.9 to 1 \cite{han2006efficient}.
-Next, a window function (e.g., Hanning) is applied to the data to minimize spectral leakage during the fast Fourier transform (FFT) process. The linear spectrum is transformed into a Mel scale for better computing efficiency using the following equation $Mel(f) = 2595\cdot \log(1 + f/700)$ \cite{han2006efficient}.
+The typical procedure for classifying heart sounds is shown in Figure~\ref{fig:arch-heart-sound} \cite{gupta2007neural, nguyen2023heart}. It comprises three main steps: 1) signal conditioning, 2) extraction of spectral features, and 3) classification. This method is a proven method in the audio world, specifically keyword spotting (KWS) \cite{chong20220}. For signal conditioning, the digitized heart sound undergoes a high-pass filter (HPF) to eliminate any DC components in the signal. The HPF is typically performed by $y[n] = x[n] - \alpha~x[n-1]$ where $\alpha$ typically ranges from 0.9 to 1 \cite{han2006efficient}. Subsequently, the signal is segmented and windowed (preferably a Hanning window) to prevent spectral leakage.  The linear spectrum is transformed into a Mel scale for better computing efficiency using the following equation $Mel(f) = 2595\cdot \log(1 + f/700)$ \cite{han2006efficient}.
 Subsequently, the logarithm of the Mel frequency power is computed followed by the discrete cosine transform (DCT) to generate the MFCC coefficients. These coefficients are then fed into a \textit{trained} classifier (CNN/RNN) to detect possible cardiovascular disorders.
 
- 
+\subsubsection*{Training and Testing the Model}
+The classification model depicted in Figure~\ref{fig:arch-heart-sound} will be deployed on Microchip's platform \textit{PolarFire SoC FPGA Icicle Kit} utilizing a blend of C / C++ and Verilog to interface with the SoC and FPGA fabric.
+Heart sounds from the \textbf{2016 Challenge Database of PhysioNet Computational Cardiology (CinC)} \cite{liu2016open} will be used to train a Convolutional Neural Network (CNN). After CNN is trained and \textit{weights} are established, the model will be randomly tested using the same data set to evaluate the accuracy of the training. Upon completion of the testing, we will proceed to the real-time application as described in the subsequent section.
+
 \section{Example of its Application}
 % application (Describe an example consisting of potential application/Future application. This will enable usage model towards its market acceptance) (maximum 200 words)
 
+%%% FIGURE: HW SETUP
+%%% ------------------------
+\begin{figure}[htbp]	
+    %\centerline{\includegraphics{figs/KWS-architecture.png}}
+    \includegraphics[width=1.0\textwidth]{figs/HW-setup.png}
+    \caption{Setup diagram for the electronic heart monitor: A bluetooth-capable digital stethoscope is interfaced to the PolarFire EVM via ESP32 modeMCU.}
+    \label{fig:hw-setup}
+\end{figure}
+
+After the heart sound classification model shown in Figure~\ref{fig:arch-heart-sound} is implemented in the PolarFire SoC FPGA Icicle Kit and trained, it will be used to demonstrate a real-time heart monitor as shown in Figure~\ref{fig:hw-setup}.
+
+A bluetooth enabled digital stethoscope such as \href{https://www.littmann.com/3M/en_US/littmann-stethoscopes/advantages/core-digital-stethoscope/}{3M Littmann CORE Digital Stethoscope} will be used to listen to real-time heart sounds. A nodeMCU ESP32 device will be used to interface the bluetooth device with the PolarFire EVM using a high-speed SPI serial bus. These digital data will be processed and classified in real time.
+
+Given the large realistic data set for training, the classification should help a general physician close the diagnostic gap from an expert cardiologist. 
 
 \section{Benefits and Value Addition}
 % (Explain the key benefits of your idea/implementation. You should describe the key value addition of your idea as this will explain why your idea has value in the presence of other participants. It will show uniqueness/Unique selling point/key differentiator) (maximum 200 words)
 
+Utilizing machine learning for the clinical diagnosis of cardiovascular disorders provides several significant benefits for a general physician, such as:
+
+\begin{itemize}
+    \item Ability to \textbf{greatly enhance} the diagnostic capability. 
+    \item \textbf{Cost-effective} solution since the hardware cost is neglible amount compared to the cost of service it provides.
+    \item \textbf{Non-invasive method} offers several advantages including, safety of the patient.
+    \item Greatly \textbf{reduces healthcare cost} by providing low-cost solution for a very specialized field.
+    \item \textbf{Quality healthcare} for rural and under-privileged demography.
+    \item The same model can be applied to other areas of healthcare.
+\end{itemize}
+
+In summary, electronic heart monitoring has the potential to truly \textbf{democratize} healthcare and bring about a much-needed revolution in the field.
 
 
 
-\section{Team Members}
+\section{"SiDoc" Team Members}
 % •	List your team members’ names, program, department, year of study and contact emails here
-\begin{table}[h]
+Team members are listed in \textbf{Table~\ref{tab:student_info}}.
+
+\begin{table}[!htbp]
     \centering
-    \begin{tabular}{|c|c|c|c|c|}
+    \begin{tabular}{|l|c|c|c|l|}
         \hline
         \textbf{Name} & \textbf{Program} & \textbf{Dept.} & \textbf{Year} & \textbf{Email} \\ \hline\hline
-        & & & & \\ \hline
-        & & & & \\ \hline
-        & & & & \\ \hline
-        & & & & \\ \hline
+        Tanmaya Rout & B.Tech. & EE & 2021-25 & \texttt{tanmayrout4112002@gmail.com}\\ \hline
+        Mandeep Mishra & M.Sc. & VLSI & 2023-25 & \texttt{mishra.md03@gmail.com}\\ \hline
+        Amiya Dash & M.Sc. & VLSI & 2023-25 & \texttt{amanamiya603@gmail.com}\\ \hline
+        Abhinandita Singh & B.Tech. & CSE & 2021-25 & \texttt{singhabhinandita4@gmail.com}\\ \hline
     \end{tabular}
     \caption{Team Member Information}
     \label{tab:student_info}
@@ -96,12 +127,11 @@ Bhubaneswar, 751024, ODISHA
 \section{Contact Person}
 %  Mention one contact person from the institute, his/her official/institute email id, and contact phone number.
 
-Saroj Rout \\
-Additional Professor, Electronics Engineering Department \\
+Santunu Sarangi \\
+Sr. Assistant Professor, Electronics Engineering Department \\
 Silicon University, Odisha \\
-\textit{Email}: \texttt{saroj.rout@silicon.ac.in} \\
-\textit{Phone}: +91-90907-52283 \\
-
+\textit{Email}: \texttt{santunu.sarangi@silicon.ac.in} \\
+\textit{Phone}: +91-93482-14035 \\
 
 \bibliographystyle{ieeetr}
 \bibliography{reference}
